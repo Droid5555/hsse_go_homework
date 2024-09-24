@@ -25,13 +25,13 @@ type BookSlice []PairIdBook
 type BookMap map[string]Book
 
 type StorageInterface interface {
-	Search(id string) (Book, bool)
-	Add(id string, book Book) (StorageInterface, bool)
+	Search(string) (Book, bool)
+	Add(string, Book) (StorageInterface, bool)
 }
 
 type LibraryInterface interface {
-	Search(name string) (Book, bool)
-	Add(book Book) bool
+	Search(string) (Book, bool)
+	Add(Book) bool
 	SetIdGenerator(idGenerator)
 	SetStorage(StorageInterface)
 }
@@ -186,13 +186,10 @@ func Hash2(b Book) string {
 	return strconv.Itoa(hashInt) + "HASH2"
 }
 
-func main() {
+func Test1(lib LibraryInterface) {
 	fmt.Println("\nTEST 1")
 	// Создать слайс книг и библиотеку
 	storage := []Book{{"Анна Каренина", "Лев Толстой"}, {"1984", "George Orwell"}}
-	var lib LibraryInterface = &Library{}
-	lib.SetIdGenerator(Hash1)
-	lib.SetStorage(BookMap{})
 	// загрузить книги в библиотеку
 	for _, book := range storage {
 		lib.Add(book)
@@ -200,7 +197,9 @@ func main() {
 	// найти 1-2 книги в библиотеке.
 	fmt.Println(lib.Search("Анна Каренина"))
 	fmt.Println(lib.Search("1984"))
+}
 
+func Test2(lib LibraryInterface) {
 	fmt.Println("\nTEST 2")
 	// Заменить функцию генератор id
 	lib.SetIdGenerator(Hash2)
@@ -210,7 +209,9 @@ func main() {
 	lib.Add(Book{"Поющие в терновнике", "Колин Маккалоу"})
 	fmt.Println(lib.Search("ПАЮЩиЕ В ТЕРНОВНИКЕ"))
 	fmt.Println(lib.Search("Поющие в терновнике"))
+}
 
+func Test3(lib LibraryInterface) {
 	fmt.Println("\nTEST 3")
 	// Заменить хранилище
 	lib.SetStorage(BookSlice{})
@@ -225,7 +226,9 @@ func main() {
 	fmt.Println(lib.Search("Гарри Поттер и Орден Феникса"))
 	fmt.Println(lib.Search("Детство. Отрочество. Юность."))
 	fmt.Println(lib.Search("Ryan Gosling"))
+}
 
+func Test4(lib LibraryInterface) {
 	fmt.Println("\nTEST 4 (non-empty container)")
 
 	lib.SetStorage(BookMap{
@@ -237,4 +240,17 @@ func main() {
 	fmt.Println(lib.Search("Правила и основы игры го"))
 	fmt.Println(lib.Search("Анна Каренина"))
 	fmt.Println(lib.Search("Детство. Отрочество. Юность."))
+}
+
+func main() {
+	// lib init
+	var lib LibraryInterface = &Library{}
+	lib.SetIdGenerator(Hash1)
+	lib.SetStorage(BookMap{})
+
+	Test1(lib)
+	Test2(lib)
+	Test3(lib)
+	Test4(lib)
+
 }
