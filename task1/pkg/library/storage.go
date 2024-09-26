@@ -1,9 +1,15 @@
-package structs
+package library
 
 type StorageInterface interface {
 	Search(string) (Book, bool)
 	Add(string, Book) (StorageInterface, bool)
 }
+
+// BookSlice Storage type 1
+type BookSlice []PairIDBook
+
+// BookMap Storage type 2
+type BookMap map[string]Book
 
 //Storage methods
 
@@ -22,7 +28,7 @@ func (bookMap BookMap) Search(id string) (Book, bool) {
 }
 
 func (bookSlice BookSlice) Add(id string, book Book) (StorageInterface, bool) {
-	return append(bookSlice, PairIdBook{id, book}), true
+	return append(bookSlice, PairIDBook{id, book}), true
 }
 
 func (bookMap BookMap) Add(id string, book Book) (StorageInterface, bool) {

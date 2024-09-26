@@ -1,24 +1,24 @@
-package structs
+package library
 
 import "log"
 
 type LibraryInterface interface {
 	Search(string) (Book, bool)
 	Add(Book) bool
-	SetIdGenerator(idGenerator)
+	SetIdGenerator(IDGenerator)
 	SetStorage(StorageInterface)
 }
 
 type Library struct {
 	storage  StorageInterface
-	nameToId map[string]string
-	hashFunc idGenerator
+	nameToID map[string]string
+	hashFunc IDGenerator
 }
 
 // Library methods
 
 func (lib Library) Search(name string) (Book, bool) {
-	b, ok := lib.storage.Search(lib.nameToId[name])
+	b, ok := lib.storage.Search(lib.nameToID[name])
 	if !ok {
 		log.Println("Can't find the book with name: ", name)
 	}
@@ -30,17 +30,17 @@ func (lib *Library) Add(book Book) bool {
 	ok := false
 	lib.storage, ok = lib.storage.Add(id, book)
 	if ok {
-		if lib.nameToId == nil {
-			lib.nameToId = make(map[string]string)
+		if lib.nameToID == nil {
+			lib.nameToID = make(map[string]string)
 		}
-		lib.nameToId[book.Title] = id
+		lib.nameToID[book.Title] = id
 		return ok
 	}
 	log.Println("Can't add the book: ", book)
 	return ok
 }
 
-func (lib *Library) SetIdGenerator(function idGenerator) {
+func (lib *Library) SetIdGenerator(function IDGenerator) {
 	if function == nil {
 		return
 	}
@@ -60,15 +60,15 @@ func (lib *Library) SetIdGenerator(function idGenerator) {
 	}
 
 	var newId string
-	for name, prevId := range lib.nameToId {
-		book, ok := lib.storage.Search(lib.nameToId[name])
+	for name, prevId := range lib.nameToID {
+		book, ok := lib.storage.Search(lib.nameToID[name])
 		if ok {
 			newId = function(book)
 			newLibStorage, _ = newLibStorage.Add(newId, book)
 		} else {
 			log.Println("Can't find the book at the id: ", prevId, " while transferring books to new IDs")
 		}
-		lib.nameToId[name] = newId
+		lib.nameToID[name] = newId
 	}
 
 	lib.storage = newLibStorage
@@ -93,8 +93,8 @@ func (lib *Library) SetStorage(container StorageInterface) {
 		newLibStorage = make(BookMap)
 	}
 
-	for name, id := range lib.nameToId {
-		book, ok := lib.storage.Search(lib.nameToId[name])
+	for name, id := range lib.nameToID {
+		book, ok := lib.storage.Search(lib.nameToID[name])
 		if ok {
 			newLibStorage, _ = newLibStorage.Add(id, book)
 		} else {
@@ -108,13 +108,13 @@ func (lib *Library) SetStorage(container StorageInterface) {
 		for _, pairIdBook := range container.(BookSlice) {
 			book := pairIdBook.book
 			id := lib.hashFunc(book)
-			lib.nameToId[book.Title] = id
+			lib.nameToID[book.Title] = id
 			newLibStorage, _ = newLibStorage.Add(id, book)
 		}
 	case BookMap:
 		for _, book := range container.(BookMap) {
 			id := lib.hashFunc(book)
-			lib.nameToId[book.Title] = id
+			lib.nameToID[book.Title] = id
 			newLibStorage, _ = newLibStorage.Add(id, book)
 		}
 	}
