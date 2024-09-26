@@ -9,10 +9,11 @@ import (
 func main() {
 	// lib init
 	var lib library.LibraryInterface = &library.Library{}
-	lib.SetIdGenerator(tools.Hash1)
+	lib.SetIdGenerator(tools.HashGen1)
 	lib.SetStorage(library.BookMap{})
-	test.Test1(lib)
-	test.Test2(lib)
-	test.Test3(lib)
-	test.Test4(lib)
+
+	test.BasicUsage(lib)
+	test.SetNewIDGenerator(lib)
+	test.SetNewStorage(lib)
+	test.SetNewNonEmptyStorage(lib)
 }

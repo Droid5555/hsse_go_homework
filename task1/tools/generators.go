@@ -8,13 +8,13 @@ import (
 	"strconv"
 )
 
-func Hash1(b library.Book) string {
+func HashGen1(b library.Book) string {
 	data := b.Title + b.Author
 	hash := sha256.Sum256([]byte(data))
 	return hex.EncodeToString(hash[:]) + "HASH1"
 }
 
-func Hash2(b library.Book) string {
+func HashGen2(b library.Book) string {
 	data := b.Title + b.Author
 	hash := sha256.Sum256([]byte(data))
 	hashInt := int(binary.BigEndian.Uint64(hash[:8]))

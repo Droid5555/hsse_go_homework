@@ -6,7 +6,7 @@ import (
 	"hsse_go_homework/task1/tools"
 )
 
-func Test1(lib library.LibraryInterface) {
+func BasicUsage(lib library.LibraryInterface) {
 	fmt.Println("\nTEST 1")
 	// Создать слайс книг и библиотеку
 	storage := []library.Book{{"Анна Каренина", "Лев Толстой"}, {"1984", "George Orwell"}}
@@ -19,10 +19,10 @@ func Test1(lib library.LibraryInterface) {
 	fmt.Println(lib.Search("1984"))
 }
 
-func Test2(lib library.LibraryInterface) {
+func SetNewIDGenerator(lib library.LibraryInterface) {
 	fmt.Println("\nTEST 2")
 	// Заменить функцию генератор id
-	lib.SetIdGenerator(tools.Hash2)
+	lib.SetIdGenerator(tools.HashGen2)
 	// найти еще книгу в библиотеке
 	fmt.Println(lib.Search("Анна Каренина"))
 	fmt.Println(lib.Search("1984"))
@@ -31,7 +31,7 @@ func Test2(lib library.LibraryInterface) {
 	fmt.Println(lib.Search("Поющие в терновнике"))
 }
 
-func Test3(lib library.LibraryInterface) {
+func SetNewStorage(lib library.LibraryInterface) {
 	fmt.Println("\nTEST 3")
 	// Заменить хранилище
 	lib.SetStorage(library.BookSlice{})
@@ -48,7 +48,7 @@ func Test3(lib library.LibraryInterface) {
 	fmt.Println(lib.Search("Ryan Gosling"))
 }
 
-func Test4(lib library.LibraryInterface) {
+func SetNewNonEmptyStorage(lib library.LibraryInterface) {
 	fmt.Println("\nTEST 4 (non-empty container)")
 
 	lib.SetStorage(library.BookMap{
