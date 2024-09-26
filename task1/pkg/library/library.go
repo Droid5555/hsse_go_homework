@@ -1,23 +1,28 @@
 package library
 
-import "log"
+import (
+	"hsse_go_homework/task1/pkg/book"
+	"hsse_go_homework/task1/pkg/generator"
+	"hsse_go_homework/task1/pkg/storage"
+	"log"
+)
 
-type LibraryInterface interface {
-	Search(string) (Book, bool)
-	Add(Book) bool
-	SetIdGenerator(IDGenerator)
-	SetStorage(StorageInterface)
+type Interface interface {
+	Search(string) (book.Book, bool)
+	Add(book.Book) bool
+	SetIdGenerator(generator.IDGenerator)
+	SetStorage(storage.Interface)
 }
 
 type Library struct {
-	storage  StorageInterface
+	storage  storage.Interface
 	nameToID map[string]string
-	hashFunc IDGenerator
+	hashFunc generator.IDGenerator
 }
 
 // Library methods
 
-func (lib Library) Search(name string) (Book, bool) {
+func (lib Library) Search(name string) (book.Book, bool) {
 	b, ok := lib.storage.Search(lib.nameToID[name])
 	if !ok {
 		log.Println("Can't find the book with name: ", name)
@@ -25,22 +30,22 @@ func (lib Library) Search(name string) (Book, bool) {
 	return b, ok
 }
 
-func (lib *Library) Add(book Book) bool {
-	id := lib.hashFunc(book)
+func (lib *Library) Add(b book.Book) bool {
+	id := lib.hashFunc(b)
 	ok := false
-	lib.storage, ok = lib.storage.Add(id, book)
+	lib.storage, ok = lib.storage.Add(id, b)
 	if ok {
 		if lib.nameToID == nil {
 			lib.nameToID = make(map[string]string)
 		}
-		lib.nameToID[book.Title] = id
+		lib.nameToID[b.Title] = id
 		return ok
 	}
-	log.Println("Can't add the book: ", book)
+	log.Println("Can't add the book: ", b)
 	return ok
 }
 
-func (lib *Library) SetIdGenerator(function IDGenerator) {
+func (lib *Library) SetIdGenerator(function generator.IDGenerator) {
 	if function == nil {
 		return
 	}
@@ -50,21 +55,21 @@ func (lib *Library) SetIdGenerator(function IDGenerator) {
 		return
 	}
 
-	var newLibStorage StorageInterface
+	var newLibStorage storage.Interface
 
 	switch lib.storage.(type) {
-	case BookSlice:
-		newLibStorage = make(BookSlice, 0)
-	case BookMap:
-		newLibStorage = make(BookMap)
+	case storage.BookSlice:
+		newLibStorage = make(storage.BookSlice, 0)
+	case storage.BookMap:
+		newLibStorage = make(storage.BookMap)
 	}
 
 	var newId string
 	for name, prevId := range lib.nameToID {
-		book, ok := lib.storage.Search(lib.nameToID[name])
+		b, ok := lib.storage.Search(lib.nameToID[name])
 		if ok {
-			newId = function(book)
-			newLibStorage, _ = newLibStorage.Add(newId, book)
+			newId = function(b)
+			newLibStorage, _ = newLibStorage.Add(newId, b)
 		} else {
 			log.Println("Can't find the book at the id: ", prevId, " while transferring books to new IDs")
 		}
@@ -75,7 +80,7 @@ func (lib *Library) SetIdGenerator(function IDGenerator) {
 	lib.hashFunc = function
 }
 
-func (lib *Library) SetStorage(container StorageInterface) {
+func (lib *Library) SetStorage(container storage.Interface) {
 	if container == nil {
 		return
 	}
@@ -84,19 +89,19 @@ func (lib *Library) SetStorage(container StorageInterface) {
 		lib.storage = container
 	}
 
-	var newLibStorage StorageInterface
+	var newLibStorage storage.Interface
 
 	switch container.(type) {
-	case BookSlice:
-		newLibStorage = make(BookSlice, 0)
-	case BookMap:
-		newLibStorage = make(BookMap)
+	case storage.BookSlice:
+		newLibStorage = make(storage.BookSlice, 0)
+	case storage.BookMap:
+		newLibStorage = make(storage.BookMap)
 	}
 
 	for name, id := range lib.nameToID {
-		book, ok := lib.storage.Search(lib.nameToID[name])
+		b, ok := lib.storage.Search(lib.nameToID[name])
 		if ok {
-			newLibStorage, _ = newLibStorage.Add(id, book)
+			newLibStorage, _ = newLibStorage.Add(id, b)
 		} else {
 			log.Println("Can't find the book at the id: ", id, " while transferring books to the new container")
 		}
@@ -104,18 +109,18 @@ func (lib *Library) SetStorage(container StorageInterface) {
 
 	// Transferring elements from the container (it may not be empty)
 	switch container.(type) {
-	case BookSlice:
-		for _, pairIdBook := range container.(BookSlice) {
-			book := pairIdBook.book
-			id := lib.hashFunc(book)
-			lib.nameToID[book.Title] = id
-			newLibStorage, _ = newLibStorage.Add(id, book)
+	case storage.BookSlice:
+		for _, pairIdBook := range container.(storage.BookSlice) {
+			b := pairIdBook.Book
+			id := lib.hashFunc(b)
+			lib.nameToID[b.Title] = id
+			newLibStorage, _ = newLibStorage.Add(id, b)
 		}
-	case BookMap:
-		for _, book := range container.(BookMap) {
-			id := lib.hashFunc(book)
-			lib.nameToID[book.Title] = id
-			newLibStorage, _ = newLibStorage.Add(id, book)
+	case storage.BookMap:
+		for _, b := range container.(storage.BookMap) {
+			id := lib.hashFunc(b)
+			lib.nameToID[b.Title] = id
+			newLibStorage, _ = newLibStorage.Add(id, b)
 		}
 	}
 	lib.storage = newLibStorage

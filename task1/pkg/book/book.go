@@ -1,4 +1,4 @@
-package library
+package book
 
 type Book struct {
 	Title  string
@@ -6,6 +6,6 @@ type Book struct {
 }
 
 type PairIDBook struct {
-	id   string
-	book Book
+	ID   string
+	Book Book
 }
