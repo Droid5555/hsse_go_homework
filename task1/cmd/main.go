@@ -8,10 +8,7 @@ import (
 )
 
 func main() {
-	// lib init
-	var lib library.Interface = &library.Library{}
-	lib.SetIdGenerator(tools.HashGen1)
-	lib.SetStorage(storage.BookMap{})
+	lib := library.NewLibrary(tools.HashGen1, storage.BookMap{})
 
 	test.BasicUsage(lib)
 	test.SetNewIDGenerator(lib)

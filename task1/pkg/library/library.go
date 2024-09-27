@@ -20,6 +20,13 @@ type Library struct {
 	hashFunc generator.IDGenerator
 }
 
+func NewLibrary(g generator.IDGenerator, s storage.Interface) Interface {
+	var lib Interface = &Library{}
+	lib.SetIdGenerator(g)
+	lib.SetStorage(s)
+	return lib
+}
+
 // Library methods
 
 func (lib Library) Search(name string) (book.Book, bool) {
