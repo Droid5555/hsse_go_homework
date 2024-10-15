@@ -36,5 +36,5 @@ func PostDecode(client *http.Client, s string) (string, error) {
 		return "", fmt.Errorf("could not unmarshal response body: %w", err)
 	}
 
-	return jsonOutput.OutputString, nil
+	return jsonOutput.Response, nil
 }

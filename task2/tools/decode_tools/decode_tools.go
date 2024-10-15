@@ -1,15 +1,15 @@
 package decode_tools
 
 type Input struct {
-	InputString string `json:"inputString"`
+	Request string `json:"inputString"`
 }
 
 type Output struct {
-	OutputString string `json:"outputString"`
+	Response string `json:"outputString"`
 }
 
 func NewInput(s string) *Input {
 	d := &Input{}
-	d.InputString = s
+	d.Request = s
 	return d
 }

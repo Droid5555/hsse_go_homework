@@ -20,14 +20,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	decodedString, err := base64.StdEncoding.DecodeString(input.InputString)
+	decodedString, err := base64.StdEncoding.DecodeString(input.Request)
 	if err != nil {
 		http.Error(w, "400 Bad Request : (Decode Error)", http.StatusBadRequest)
 		return
 	}
 
 	output := decode_tools.Output{
-		OutputString: string(decodedString),
+		Response: string(decodedString),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
