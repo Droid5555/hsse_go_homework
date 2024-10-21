@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"golang.org/x/sync/errgroup"
-	"hsse_go_homework/task2/internal/server/server"
+	"hsse_go_homework/task2/api/server"
 	"hsse_go_homework/task2/tools/version_tools"
 	"log"
 	"os/signal"
@@ -28,12 +28,12 @@ func main() {
 
 	// Start server handling
 	group.Go(func() error {
-		return server.Start(&httpServer)
+		return httpServer.Start()
 	})
 
 	// Shutdown server handling
 	group.Go(func() error {
-		return server.Stop(ctx, &httpServer)
+		return httpServer.Stop(ctx)
 	})
 
 	// Group errors handling

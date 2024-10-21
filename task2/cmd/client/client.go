@@ -1,15 +1,15 @@
 package main
 
 import (
+	"hsse_go_homework/task2/api/client"
 	"hsse_go_homework/task2/test"
-	"net/http"
 )
 
 func main() {
-	client := &http.Client{}
+	c := client.New("http://localhost:8080")
 
-	test.GetVersion(client)
-	test.PostDecode(client)
-	test.GetHardOp(client)
+	test.GetVersion(c)
+	test.PostDecode(c)
+	test.GetHardOp(c)
 
 }
